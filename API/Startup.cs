@@ -27,6 +27,8 @@ namespace API
 
       services.AddControllers();
 
+      services.AddCors();
+
       services.AddSwaggerGen(c =>
       {
         c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebAPIv5", Version = "v1" });
@@ -47,6 +49,8 @@ namespace API
 
       // To route our end points to the different controllers
       app.UseRouting();
+
+      app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:4200"));
 
       app.UseAuthorization();
 
