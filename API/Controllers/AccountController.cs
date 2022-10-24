@@ -13,25 +13,26 @@ namespace API.Controllers
   {
     private readonly DataContext _context;
     private readonly ITokenService _tokenService;
-
     public AccountController(DataContext context, ITokenService tokenService)
     {
-      _context = context;
       _tokenService = tokenService;
+      _context = context;
     }
 
     [HttpPost("register")]
     public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
     {
-      if (await UserExists(registerDto.Username.ToLower())) return new BadRequestObjectResult("Username is taken");
+      if (await UserExists(registerDto.Username)) return new BadRequestObjectResult("Username is taken");
 
       using var hmac = new HMACSHA512();
+
       var user = new AppUser
       {
         UserName = registerDto.Username.ToLower(),
         PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
         PasswordSalt = hmac.Key
       };
+
       _context.Users.Add(user);
       await _context.SaveChangesAsync();
 
@@ -45,17 +46,18 @@ namespace API.Controllers
     [HttpPost("login")]
     public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
     {
-      AppUser user = await _context.Users.FirstOrDefaultAsync(x => x.UserName == loginDto.Username);
+      var user = await _context.Users
+          .SingleOrDefaultAsync(x => x.UserName == loginDto.Username);
 
-      if (user == null) return new UnauthorizedObjectResult("Invalid User");
+      if (user == null) return new UnauthorizedObjectResult("Invalid username");
 
       using var hmac = new HMACSHA512(user.PasswordSalt);
 
-      var computeHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password));
+      var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password));
 
-      for (int i = 0; i < computeHash.Length; i++)
+      for (int i = 0; i < computedHash.Length; i++)
       {
-        if (computeHash[i] != user.PasswordHash[i]) return new UnauthorizedObjectResult("Invalid Password");
+        if (computedHash[i] != user.PasswordHash[i]) return new UnauthorizedObjectResult("Invalid password");
       }
 
       return new UserDto
