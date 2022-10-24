@@ -1,5 +1,5 @@
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { ErrorInterceptor } from './_interceptors/error.interceptor';
 import { JwtInterceptor } from './_interceptors/jwt.interceptor';
@@ -50,6 +50,7 @@ import { RegisterComponent } from './register/register.component';
     FormsModule,
     NgbModule,
     SharedModule,
+    BrowserAnimationsModule,
     NgxSpinnerModule,
   ],
   providers: [
@@ -58,5 +59,6 @@ import { RegisterComponent } from './register/register.component';
     { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true },
   ],
   bootstrap: [AppComponent],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class AppModule {}
