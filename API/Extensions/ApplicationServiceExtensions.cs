@@ -12,8 +12,10 @@ namespace API.Extensions
     {
       // Only alived during the lifetime of the request, unlike singleton which lives until the App is shutdown
       // Mainly and most appropriate for Http Requests
+      services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));
       services.AddHttpContextAccessor();
       services.AddScoped<ITokenService, TokenService>();
+      services.AddScoped<IPhotoService, PhotoService>();
       services.AddScoped<IUserRepository, UserRepository>();
       services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
       services.AddDbContext<DataContext>(options =>
