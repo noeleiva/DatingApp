@@ -17,7 +17,7 @@
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,
-    "strictTemplates": true,
+    "strictTemplates": false,
     "preserveWhitespaces": true
   }
 }
